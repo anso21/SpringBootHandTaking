@@ -23,11 +23,6 @@ public class Course {
     private Teacher teacher;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "classroom_id")
-    private Classroom classroom;
-
-    @JsonIgnore
     @ManyToMany(mappedBy = "courses")
     Set<Student> students = new HashSet<>();
 
@@ -57,15 +52,7 @@ public class Course {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
-
-    public Classroom getClassroom() {
-        return classroom;
-    }
-
-    public void setClassroom(Classroom classroom) {
-        this.classroom = classroom;
-    }
-
+    
     public Set<Student> getStudents() {
         return students;
     }
