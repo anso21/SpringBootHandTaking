@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.entities.Student;
 import com.example.demo.entities.Course;
+import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,14 @@ public class StudentServiceImplementation implements StudentService{
             return studentRepository.save(student);
         }
         return null;
+    }
+
+    @Override
+    public Student createStudentAndAssignCourse(Student student, Long courseId) {
+        Optional optional = courseService.getCourse(courseId);
+        if (optional.isEmpty()) throw new IllegalStateException("Courses does not exits !");
+        student.setCourses((Course) optional.get());
+        return studentRepository.save(student);
     }
 
     @Override
@@ -78,7 +87,7 @@ public class StudentServiceImplementation implements StudentService{
             Student student = studentOptional.get();
 
             student.setCourses(course);
-            course.setStudents(student);
+//            course.setStudents(student);
             return studentRepository.save(student);
         }
         return null;

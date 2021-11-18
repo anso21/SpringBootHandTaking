@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.entities.Course;
+import com.example.demo.entities.Teacher;
 import com.example.demo.repositories.CourseRepository;
+import com.example.demo.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class CourseServiceImplementation  implements CourseService{
 
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Override
     public List<Course> getAllCourses() {
@@ -26,6 +30,15 @@ public class CourseServiceImplementation  implements CourseService{
             return courseRepository.save(course);
         }
         return null;    }
+
+    @Override
+    public Course createCourseAndAssignToTeacher(Course course, Long teacherId) {
+        Optional optional = teacherRepository.findById(teacherId);
+        if (optional.isEmpty()) throw new IllegalStateException("Teacher does not exits !");
+//        Teacher teacher = (Teacher) optional.get();
+        course.setTeacher((Teacher) optional.get());
+        return courseRepository.save(course);
+    }
 
     @Override
     public Optional<Course> getCourse(Long id) {

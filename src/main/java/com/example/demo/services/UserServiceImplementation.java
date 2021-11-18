@@ -1,19 +1,48 @@
 package com.example.demo.services;
 
+import com.example.demo.entities.Role;
 import com.example.demo.entities.User;
+import com.example.demo.repositories.RoleRepository;
 import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
-public class UserServiceImplementation implements UserService{
+public class UserServiceImplementation implements UserService, UserDetailsService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User {} was not found", username));
+        }
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        user.getRoles().forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        });
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                authorities
+        );
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -22,16 +51,18 @@ public class UserServiceImplementation implements UserService{
 
     @Override
     public User createUser(User user) {
-        Optional<User> optional = userRepository.findByEmail(user.getEmail());
-        if (optional.isPresent()) {
-            throw new IllegalStateException("Email has already taken.");
-        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public Optional<User> getUser(Long id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -67,4 +98,20 @@ public class UserServiceImplementation implements UserService{
         userRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public User addRoleToUser(Long userId, Long roleId) {
+        Optional<Role> roleOptional = roleRepository.findById(roleId);
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (roleOptional.isEmpty() || userOptional.isEmpty()) {
+            throw new IllegalStateException("User or role does not exists !");
+        }
+
+        User user = userOptional.get();
+        user.getRoles().add(roleOptional.get());
+        return userRepository.save(user);
+    }
+
+
 }

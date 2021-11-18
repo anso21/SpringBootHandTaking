@@ -16,7 +16,7 @@ public class Student {
 
     private String firstname;
     private String lastname;
-    private Number age;
+    private Integer age;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -61,11 +61,11 @@ public class Student {
         this.courses.add(course);
     }
 
-    public Number getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Number age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 }

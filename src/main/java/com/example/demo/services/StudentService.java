@@ -9,6 +9,7 @@ public interface StudentService {
 
     List<Student> getAllStudents();
     Student createStudent(Student student);
+    Student createStudentAndAssignCourse(Student student, Long courseId);
     Optional<Student> getStudent(Long id);
     Student updateStudent(Long id, Student student);
     boolean deleteStudent(Long id);

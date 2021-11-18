@@ -47,4 +47,11 @@ public class CourseController {
         return courseService.createCourse(course);
     }
 
+    @PostMapping("teachers/{teacherId}")
+    private Course addTeacher(
+            @PathVariable Long teacherId,
+            @RequestBody Course course) {
+        return courseService.createCourseAndAssignToTeacher(course, teacherId);
+    }
+
 }

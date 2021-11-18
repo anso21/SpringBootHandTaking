@@ -42,13 +42,6 @@ public class StudentController {
         return studentService.updateStudent(id, student);
     }
 
-    @PostMapping
-    private Student addStudent(
-            @RequestBody Student student
-    ) {
-        return studentService.createStudent(student);
-    }
-
     @PutMapping("{studentId}/courses/{courseId}")
     private Student assignCourse(
             @PathVariable Long studentId,
@@ -57,5 +50,22 @@ public class StudentController {
     ) {
         return studentService.addCourse(studentId, courseId);
     }
+
+    @PostMapping
+    private Student addStudent(
+            @RequestBody Student student
+    ) {
+        return studentService.createStudent(student);
+    }
+
+    @PostMapping("courses/{courseId}")
+    private Student addStudent(
+            @RequestBody Student student,
+            @PathVariable Long courseId
+    ) {
+        return studentService.createStudentAndAssignCourse(student, courseId);
+    }
+
+
 
 }

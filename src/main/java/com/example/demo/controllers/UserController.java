@@ -25,9 +25,22 @@ public class UserController {
         return userService.getUser(id);
     }
 
+//    @GetMapping("{username}")
+//    public User getUserByUsername(@RequestParam String username) {
+//        System.out.println(username);
+//        return userService.getByUsername(username);
+//    }
+
     @PostMapping
     public User createUser(@RequestBody User  user) {
         return userService.createUser(user);
+    }
+
+    @PostMapping("{userId}/roles/{roleId}")
+    public User addRoleToUser(
+            @PathVariable Long userId,
+            @PathVariable Long roleId) {
+        return userService.addRoleToUser(userId, roleId);
     }
 
     @PutMapping("{id}")
