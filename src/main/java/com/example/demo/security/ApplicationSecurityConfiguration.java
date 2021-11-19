@@ -31,7 +31,6 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         JwtUsernameAndPasswordAuthenticationFilter jwtUsernameAndPasswordAuthenticationFilter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig);
         jwtUsernameAndPasswordAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http
@@ -44,8 +43,8 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .and()
                 .authorizeRequests().antMatchers("/", "index", "css/**", "js/**").permitAll()
 //                .antMatchers("/api/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
-//                .and()
-//                .httpBasic();
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic();
     }
 }
